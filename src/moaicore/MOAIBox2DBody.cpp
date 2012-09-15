@@ -557,6 +557,64 @@ int MOAIBox2DBody::_getWorldCenter ( lua_State* L ) {
 }
 
 //----------------------------------------------------------------//
+/**	@name	getWorldPoint
+	@text	See Box2D documentation.
+	
+	@in		MOAIBox2DBody self
+	@in		number localX	in units, world coordinates, converted from meters
+	@in		number localY	in units, world coordinates, converted from meters
+	@out	number worldX	in units, world coordinates, converted from meters
+	@out	number worldY	in units, world coordinates, converted from meters
+*/
+int MOAIBox2DBody::_getWorldPoint ( lua_State* L ) {
+	MOAI_LUA_SETUP ( MOAIBox2DBody, "UNN" )
+	float unitsToMeters = self->GetUnitsToMeters ();
+	
+	if ( !self->mBody ) {
+		MOAILog ( state, MOAILogMessages::MOAIBox2DBody_MissingInstance );
+		return 0;
+	}
+
+	float x = state.GetValue < float >( 2, 0.0f );
+	float y = state.GetValue < float >( 3, 0.0f );
+	
+	b2Vec2 center = self->mBody->GetWorldPoint ( b2Vec2( x, y ) );
+	lua_pushnumber ( state, center.x / unitsToMeters );
+	lua_pushnumber ( state, center.y / unitsToMeters );
+	
+	return 2;
+}
+
+//----------------------------------------------------------------//
+/**	@name	getWorldVector
+	@text	See Box2D documentation.
+	
+	@in		MOAIBox2DBody self
+	@in		number localX	in units, world coordinates, converted from meters
+	@in		number localY	in units, world coordinates, converted from meters
+	@out	number worldX	in units, world coordinates, converted from meters
+	@out	number worldY	in units, world coordinates, converted from meters
+*/
+int MOAIBox2DBody::_getWorldVector ( lua_State* L ) {
+	MOAI_LUA_SETUP ( MOAIBox2DBody, "UNN" )
+	float unitsToMeters = self->GetUnitsToMeters ();
+	
+	if ( !self->mBody ) {
+		MOAILog ( state, MOAILogMessages::MOAIBox2DBody_MissingInstance );
+		return 0;
+	}
+	
+	float x = state.GetValue < float >( 2, 0.0f );
+	float y = state.GetValue < float >( 3, 0.0f );
+	
+	b2Vec2 center = self->mBody->GetWorldVector ( b2Vec2( x, y ) );
+	lua_pushnumber ( state, center.x / unitsToMeters );
+	lua_pushnumber ( state, center.y / unitsToMeters );
+	
+	return 2;
+}
+
+//----------------------------------------------------------------//
 /**	@name	isActive
 	@text	See Box2D documentation.
 	
@@ -1000,6 +1058,8 @@ void MOAIBox2DBody::RegisterLuaFuncs ( MOAILuaState& state ) {
 		{ "getMass",				_getMass },
 		{ "getPosition",			_getPosition },
 		{ "getWorldCenter",			_getWorldCenter },
+		{ "getWorldPoint",			_getWorldPoint },
+		{ "getWorldVector",			_getWorldVector },
 		{ "isActive",				_isActive },
 		{ "isAwake",				_isAwake },
 		{ "isBullet",				_isBullet },

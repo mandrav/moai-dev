@@ -48,6 +48,8 @@ private:
 	static int		_getMass				( lua_State* L );
 	static int		_getPosition			( lua_State* L );
 	static int		_getWorldCenter			( lua_State* L );
+	static int		_getWorldPoint			( lua_State* L );
+	static int		_getWorldVector			( lua_State* L );
 	static int		_isActive				( lua_State* L );
 	static int		_isAwake				( lua_State* L );
 	static int		_isBullet				( lua_State* L );
