@@ -100,7 +100,7 @@ project "moai"
 	links { "jansson", "uslscore", "expat", "zlcore", "tlsf", "jpg", "png", "z", "cares", "lua-lib" }
 	if not _OPTIONS["no-curl"] then links "curl" end
 	if not _OPTIONS["no-openssl"] then links "ssl" end
-	links { "crypto", "pthread", "rt" }
+	links { "crypto", "GL", "pthread", "rt", "dl" }
 
 --
 -- MOAI Core
@@ -120,7 +120,8 @@ project "aku"
 	language "C++"
 	location "build"
 	includedirs { "src", "src/aku", "3rdparty", "src/config-default", "3rdparty/glew-1.5.6/include", "3rdparty/freetype-2.4.4/include",
-					"3rdparty/tinyxml", "3rdparty/box2d-2.2.1", "3rdparty/chipmunk-5.3.4/include", "3rdparty/jansson-2.1/src" }
+					"3rdparty/tinyxml", "3rdparty/box2d-2.2.1", "3rdparty/chipmunk-5.3.4/include", "3rdparty/jansson-2.1/src",
+					"3rdparty/expat-2.0.1/lib", "3rdparty/zlib-1.2.3", "3rdparty/curl-7.19.7/include", "3rdparty/lua-5.1.3/src"}
 	files {	"src/aku/*.cpp", "src/aku/*.h" }
 	excludes {	"src/aku/AKU-audiosampler.cpp", "src/aku/AKU-untz.cpp" }
 
@@ -363,7 +364,7 @@ if not _OPTIONS["no-curl"] then
 		language "C"
 		location "build"
 		defines { "L_ENDIAN", "OPENSSL_SYSNAME_LINUX", "OPENSSL_NO_RC5", "OPENSSL_NO_MD2", "OPENSSL_NO_KRB5", "OPENSSL_NO_JPAKE", "OPENSSL_NO_STATIC_ENGINE", "__MOAI_LINUX_BUILD" }
-		includedirs { "premake_files/libcurl/", "3rdparty/curl-7.19.7/include" }
+		includedirs { "premake_files/libcurl/", "3rdparty/curl-7.19.7/include", "3rdparty/openssl-1.0.0d/include" }
 		files {	"3rdparty/curl-7.19.7/lib/**.c", "3rdparty/curl-7.19.7/lib/**.h" }
 end
 
@@ -442,7 +443,9 @@ project "luaext"
 	kind "StaticLib"
 	language "C"
 	location "build"
-	includedirs { "3rdparty/lua-5.1.3/src", "3rdparty/luasocket-2.0.2/src" }
+	includedirs { "3rdparty/lua-5.1.3/src", "3rdparty/luasocket-2.0.2/src", "3rdparty/sqlite-3.6.16",
+			"3rdparty/expat-2.0.1/lib", "3rdparty/zlib-1.2.3", "3rdparty/curl-7.19.7/include", "3rdparty/lua-5.1.3/src",
+			"3rdparty/openssl-1.0.0d/include"}
 	files {	"3rdparty/luasocket-2.0.2-embed/*.c", "3rdparty/luasocket-2.0.2-embed/*.h", "3rdparty/luasocket-2.0.2/src/*.c", "3rdparty/luasocket-2.0.2/src/*.h",
 			"3rdparty/luacrypto-0.2.0/src/lcrypto.c", "3rdparty/luacurl-1.2.1/luacurl.c", "3rdparty/luasql-2.2.0/src/ls_sqlite3.c",
 			"3rdparty/sqlite-3.6.16/sqlite3.c", "3rdparty/luasql-2.2.0/src/luasql.c", "3rdparty/luafilesystem-1.5.0/src/lfs.c" }
@@ -488,7 +491,7 @@ project "uslscore"
 	language "C++"
 	location "build"
 	defines { "__MOAI_LINUX_BUILD" }
-	includedirs { "src", "src/uslscore", "3rdparty/ooid-0.99" }
+	includedirs { "src", "src/uslscore", "3rdparty/ooid-0.99", "3rdparty/expat-2.0.1/lib" }
 	files {	"src/uslscore/*.cpp", "src/uslscore/*.h" }
 
 --
