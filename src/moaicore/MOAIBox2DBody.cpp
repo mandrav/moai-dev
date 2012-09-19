@@ -208,10 +208,12 @@ int MOAIBox2DBody::_addPolygon ( lua_State* L ) {
 	@in		number xMax	in units, world coordinates, converted to meters
 	@in		number yMax	in units, world coordinates, converted to meters
 	@in		number angle
+	@opt	number xCenter	in units, world coordinates, converted to meters
+	@opt	number yCenter	in units, world coordinates, converted to meters
 	@out	MOAIBox2DFixture fixture
 */
 int MOAIBox2DBody::_addRect ( lua_State* L ) {
-	MOAI_LUA_SETUP ( MOAIBox2DBody, "UNNNN" )
+	MOAI_LUA_SETUP ( MOAIBox2DBody, "UNNNNN" )
 	float unitsToMeters = self->GetUnitsToMeters ();
 	
 	if ( !self->mBody ) {
@@ -223,13 +225,15 @@ int MOAIBox2DBody::_addRect ( lua_State* L ) {
 	rect.Bless ();
 	
 	float angle = state.GetValue < float >( 6, 0.0f );
+	float cx = state.GetValue < float >( 7, 0.0f ) * unitsToMeters;
+	float cy = state.GetValue < float >( 8, 0.0f ) * unitsToMeters;
 	
 	float hx = rect.Width () * 0.5f * unitsToMeters;
 	float hy = rect.Height () * 0.5f * unitsToMeters;
 	
 	b2Vec2 center;
-	center.x = ( rect.mXMin * unitsToMeters ) + hx;
-	center.y = ( rect.mYMin * unitsToMeters ) + hy;
+	center.x = cx == 0 ? ( rect.mXMin * unitsToMeters ) + hx  : cx;
+	center.y = cy == 0 ? ( rect.mYMin * unitsToMeters ) + hy : cy;
 	
 	b2PolygonShape polygonShape;
 	polygonShape.SetAsBox ( hx, hy, center, angle );
@@ -262,7 +266,7 @@ int MOAIBox2DBody::_applyAngularImpulse ( lua_State* L ) {
 		return 0;
 	}
 	
-	float impulse = state.GetValue < float >( 2, 0.0f ) * self->GetUnitsToMeters();
+	float impulse = state.GetValue < float >( 2, 0.0f );// * self->GetUnitsToMeters();
 	self->mBody->ApplyAngularImpulse ( impulse );
 	
 	return 0;
@@ -289,8 +293,8 @@ int MOAIBox2DBody::_applyForce ( lua_State* L ) {
 	}
 	
 	b2Vec2 force;
-	force.x = state.GetValue < float >( 2, 0.0f ) * unitsToMeters;
-	force.y = state.GetValue < float >( 3, 0.0f ) * unitsToMeters;
+	force.x = state.GetValue < float >( 2, 0.0f );// * unitsToMeters;
+	force.y = state.GetValue < float >( 3, 0.0f );// * unitsToMeters;
 	
 	b2Vec2 point;
 	point.x = state.GetValue < float >( 4, 0.0f ) * unitsToMeters;
@@ -322,8 +326,8 @@ int MOAIBox2DBody::_applyLinearImpulse ( lua_State* L ) {
 	}
 	
 	b2Vec2 impulse;
-	impulse.x = state.GetValue < float >( 2, 0.0f ) * unitsToMeters;
-	impulse.y = state.GetValue < float >( 3, 0.0f ) * unitsToMeters;
+	impulse.x = state.GetValue < float >( 2, 0.0f );// * unitsToMeters;
+	impulse.y = state.GetValue < float >( 3, 0.0f );// * unitsToMeters;
 	
 	b2Vec2 point;
 	point.x = state.GetValue < float >( 4, 0.0f ) * unitsToMeters;
@@ -349,7 +353,7 @@ int MOAIBox2DBody::_applyTorque ( lua_State* L ) {
 		MOAILog ( state, MOAILogMessages::MOAIBox2DBody_MissingInstance );
 		return 0;
 	}
-	float unitsToMeters = self->GetUnitsToMeters();
+	float unitsToMeters = 1.0f;//self->GetUnitsToMeters();
 	/* Convert from N-m (kg m / s^2) * m => (kg unit / s^2) * unit */
 	float torque = state.GetValue < float >( 2, 0.0f ) * unitsToMeters * unitsToMeters;
 	self->mBody->ApplyTorque ( torque );
@@ -433,7 +437,7 @@ int MOAIBox2DBody::_getInertia ( lua_State* L ) {
 		return 0;
 	}
 
-	float unitsToMeters = self->GetUnitsToMeters();
+	float unitsToMeters = 1.0f;//self->GetUnitsToMeters();
 	float inertia = self->mBody->GetInertia();
 	inertia /= unitsToMeters;
 	
@@ -451,7 +455,7 @@ int MOAIBox2DBody::_getInertia ( lua_State* L ) {
 */
 int MOAIBox2DBody::_getLinearVelocity ( lua_State* L ) {
 	MOAI_LUA_SETUP ( MOAIBox2DBody, "U" )
-	float unitsToMeters = self->GetUnitsToMeters ();
+	float unitsToMeters = 1.0f;//self->GetUnitsToMeters ();
 	
 	if ( !self->mBody ) {
 		MOAILog ( state, MOAILogMessages::MOAIBox2DBody_MissingInstance );
@@ -597,7 +601,7 @@ int MOAIBox2DBody::_getWorldPoint ( lua_State* L ) {
 */
 int MOAIBox2DBody::_getWorldVector ( lua_State* L ) {
 	MOAI_LUA_SETUP ( MOAIBox2DBody, "UNN" )
-	float unitsToMeters = self->GetUnitsToMeters ();
+	float unitsToMeters = 1.0f;//self->GetUnitsToMeters ();
 	
 	if ( !self->mBody ) {
 		MOAILog ( state, MOAILogMessages::MOAIBox2DBody_MissingInstance );
@@ -883,7 +887,7 @@ int MOAIBox2DBody::_setLinearDamping ( lua_State* L ) {
 */
 int MOAIBox2DBody::_setLinearVelocity ( lua_State* L ) {
 	MOAI_LUA_SETUP ( MOAIBox2DBody, "U" )
-	float unitsToMeters = self->GetUnitsToMeters ();
+	float unitsToMeters = 1.0f;//self->GetUnitsToMeters ();
 	
 	if ( !self->mBody ) {
 		MOAILog ( state, MOAILogMessages::MOAIBox2DBody_MissingInstance );
@@ -928,7 +932,7 @@ int MOAIBox2DBody::_setMassData ( lua_State* L ) {
 	self->mBody->GetMassData ( &massData );
 	
 	massData.mass		= state.GetValue < float >( 2, massData.mass );
-	massData.I			= state.GetValue < float >( 3, massData.I ) * unitsToMeters * unitsToMeters;
+	massData.I			= state.GetValue < float >( 3, massData.I );// * unitsToMeters * unitsToMeters;
 	massData.center.x	= state.GetValue < float >( 4, massData.center.x ) * unitsToMeters;
 	massData.center.y	= state.GetValue < float >( 5, massData.center.y ) * unitsToMeters;
 	

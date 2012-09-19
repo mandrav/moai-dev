@@ -133,7 +133,7 @@ int MOAIBox2DJoint::_getBodyB ( lua_State* L ) {
 */
 int MOAIBox2DJoint::_getReactionForce ( lua_State* L ) {
 	MOAI_LUA_SETUP ( MOAIBox2DJoint, "U" )
-	float unitsToMeters = self->GetUnitsToMeters ();
+	float unitsToMeters = 1.0f;//self->GetUnitsToMeters ();
 
 	if ( !self->mJoint ) {
 		MOAILog ( state, MOAILogMessages::MOAIBox2DJoint_MissingInstance );
@@ -167,7 +167,7 @@ int MOAIBox2DJoint::_getReactionTorque ( lua_State* L ) {
 	float step = ( float )( 1.0 / MOAISim::Get ().GetStep ());
 	
 	/* Convert from N-m (kg m / s^2) * m to (kg unit / s^2) * unit */
-	float unitsToMeters = self->GetUnitsToMeters();
+	float unitsToMeters = 1.0f;//self->GetUnitsToMeters();
 	float torque = self->mJoint->GetReactionTorque ( step );
 	lua_pushnumber ( state, torque / ( unitsToMeters * unitsToMeters ) );
 	

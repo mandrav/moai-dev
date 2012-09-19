@@ -42,7 +42,7 @@ int MOAIBox2DArbiter::_getNormalImpulse ( lua_State* L ) {
 	MOAI_LUA_SETUP ( MOAIBox2DArbiter, "U" )
 
 	float impulse = self->mNormalImpulse;
-	const float metersToUnits = 1 / self->GetUnitsToMeters();
+	const float metersToUnits = 1.0f;// / self->GetUnitsToMeters();
 	impulse = impulse * metersToUnits;
 
 	state.Push ( impulse );
@@ -60,7 +60,7 @@ int MOAIBox2DArbiter::_getTangentImpulse ( lua_State* L ) {
 	MOAI_LUA_SETUP ( MOAIBox2DArbiter, "U" )
 
 	float impulse = self->mTangentImpulse;
-	const float metersToUnits = 1 / self->GetUnitsToMeters();
+	const float metersToUnits = 1.0f;// / self->GetUnitsToMeters();
 	impulse = impulse * metersToUnits;
 
 	state.Push ( impulse );

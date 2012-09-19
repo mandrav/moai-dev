@@ -120,7 +120,7 @@ int MOAIBox2DFixture::_setDensity ( lua_State* L ) {
 		return 0;
 	}
 	
-	float unitsToMeters = self->GetUnitsToMeters();
+	float unitsToMeters = 1.0f;//self->GetUnitsToMeters();
 	float density = state.GetValue < float >( 2, 0.0f ) / (unitsToMeters * unitsToMeters);
 	self->mFixture->SetDensity ( density );
 
