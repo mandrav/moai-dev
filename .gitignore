@@ -9,6 +9,7 @@ Thumbs.db
 
 /src/config
 
+bin/
 build/
 xcuserdata/
 DerivedData/
@@ -22,3 +23,6 @@ cmake_install.cmake
 *.o
 *.a
 src/moai/moai
+
+# Backup files automatically created on Linux
+*~

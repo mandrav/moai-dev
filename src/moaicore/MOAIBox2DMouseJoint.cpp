@@ -67,7 +67,7 @@ int MOAIBox2DMouseJoint::_getFrequency ( lua_State* L ) {
 */
 int MOAIBox2DMouseJoint::_getMaxForce ( lua_State* L ) {
 	MOAI_LUA_SETUP ( MOAIBox2DMouseJoint, "U" )
-	float unitsToMeters = self->GetUnitsToMeters ();
+	float unitsToMeters = 1.0f;//self->GetUnitsToMeters ();
 
 	if ( !self->mJoint ) {
 		MOAILog ( state, MOAILogMessages::MOAIBox2DJoint_MissingInstance );
@@ -165,7 +165,7 @@ int MOAIBox2DMouseJoint::_setFrequency ( lua_State* L ) {
 */
 int MOAIBox2DMouseJoint::_setMaxForce ( lua_State* L ) {
 	MOAI_LUA_SETUP ( MOAIBox2DMouseJoint, "U" )
-	float unitsToMeters = self->GetUnitsToMeters ();
+	float unitsToMeters = 1.0f;//self->GetUnitsToMeters ();
 
 	if ( !self->mJoint ) {
 		MOAILog ( state, MOAILogMessages::MOAIBox2DJoint_MissingInstance );

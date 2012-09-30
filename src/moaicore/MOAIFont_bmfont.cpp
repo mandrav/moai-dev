@@ -25,7 +25,7 @@
 //----------------------------------------------------------------//
 static char* parseKeyVal ( char *p, char **key, char **val, bool *endl ) {
 
-	while ( *p && !isalnum ( *p )) {
+	while ( *p && *p != '\n' && *p != '\r' && !isalnum ( *p )) {
 		p++;
 	}
 

@@ -116,7 +116,7 @@ int MOAIBox2DRevoluteJoint::_getMotorTorque ( lua_State* L ) {
 		return 0;
 	}
 
-	float unitsToMeters = self->GetUnitsToMeters ();
+	float unitsToMeters = 1.0f; //self->GetUnitsToMeters ();
 	b2RevoluteJoint* joint = ( b2RevoluteJoint* )self->mJoint;
 	float step = ( float )( 1.0 / MOAISim::Get ().GetStep ());
 	/* Convert from N-m (kg m / s^2) * m => (kg unit / s^2) * unit */
@@ -255,7 +255,7 @@ int MOAIBox2DRevoluteJoint::_setMaxMotorTorque ( lua_State* L ) {
 		return 0;
 	}
 
-	float unitsToMeters = self->GetUnitsToMeters ();
+	float unitsToMeters = 1.0f; //self->GetUnitsToMeters ();
 	/* Convert to N-m (kg m / s^2) * m from (kg unit / s^2) * unit */
 	float maxMotorTorque = state.GetValue < float >( 2, 0.0f ) * unitsToMeters * unitsToMeters;
 
@@ -284,7 +284,7 @@ int MOAIBox2DRevoluteJoint::_setMotor ( lua_State* L ) {
 		return 0;
 	}
 	
-	float unitsToMeters = self->GetUnitsToMeters ();
+	float unitsToMeters = 1.0f;//self->GetUnitsToMeters ();
 	float speed	= state.GetValue < float >( 2, 0.0f );
 	float max	= state.GetValue < float >( 3, 0.0f );
 	bool forceEnable = state.GetValue < bool >( 4, false );

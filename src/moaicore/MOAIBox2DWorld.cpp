@@ -171,7 +171,7 @@ int	MOAIBox2DWorld::_addFrictionJoint ( lua_State* L ) {
 	b2FrictionJointDef jointDef;
 	jointDef.Initialize ( bodyA->mBody, bodyB->mBody, anchor );
 
-	float unitsToMeters = self->GetUnitsToMeters();
+	float unitsToMeters = 1.0f;//self->GetUnitsToMeters();
 
 	jointDef.maxForce	= state.GetValue < float >( 6, jointDef.maxForce / unitsToMeters ) * unitsToMeters;
 	/* Convert to/from N-m (kg m / s^2) * m from/to (kg unit / s^2) * unit */
@@ -264,7 +264,7 @@ int	MOAIBox2DWorld::_addMouseJoint ( lua_State* L ) {
 	jointDef.bodyA			= bodyA->mBody;
 	jointDef.bodyB			= bodyB->mBody;
 	jointDef.target			= target;
-	jointDef.maxForce		= state.GetValue < float >( 6, 0.0f ) * self->mUnitsToMeters;
+	jointDef.maxForce		= state.GetValue < float >( 6, 0.0f );// * self->mUnitsToMeters;
 	jointDef.frequencyHz	= state.GetValue < float >( 7, jointDef.frequencyHz );
 	jointDef.dampingRatio	= state.GetValue < float >( 8, jointDef.dampingRatio );
 	
@@ -610,8 +610,8 @@ int MOAIBox2DWorld::_getGravity ( lua_State* L ) {
 	
 	b2Vec2 gravity = self->mWorld->GetGravity ();
 	
-	lua_pushnumber ( L, gravity.x / self->mUnitsToMeters );
-	lua_pushnumber ( L, gravity.y / self->mUnitsToMeters );
+	lua_pushnumber ( L, gravity.x );// / self->mUnitsToMeters );
+	lua_pushnumber ( L, gravity.y );// / self->mUnitsToMeters );
 	
 	return 2;
 }
@@ -626,7 +626,7 @@ int MOAIBox2DWorld::_getGravity ( lua_State* L ) {
 int MOAIBox2DWorld::_getLinearSleepTolerance ( lua_State* L ) {
 	MOAI_LUA_SETUP ( MOAIBox2DWorld, "U" )
 	
-	lua_pushnumber ( state, self->mWorld->GetLinearSleepTolerance () / self->mUnitsToMeters );
+	lua_pushnumber ( state, self->mWorld->GetLinearSleepTolerance () ); // / self->mUnitsToMeters );
 	return 0;
 }
 
@@ -743,8 +743,8 @@ int MOAIBox2DWorld::_setGravity ( lua_State* L ) {
 	
 	b2Vec2 gravity;
 	
-	gravity.x	= state.GetValue < float >( 2, 0.0f ) * self->mUnitsToMeters;
-	gravity.y	= state.GetValue < float >( 3, 0.0f ) * self->mUnitsToMeters;
+	gravity.x	= state.GetValue < float >( 2, 0.0f );// * self->mUnitsToMeters;
+	gravity.y	= state.GetValue < float >( 3, 0.0f );// * self->mUnitsToMeters;
 	
 	self->mWorld->SetGravity ( gravity );
 	
@@ -780,7 +780,7 @@ int MOAIBox2DWorld::_setIterations ( lua_State* L ) {
 int MOAIBox2DWorld::_setLinearSleepTolerance ( lua_State* L ) {
 	MOAI_LUA_SETUP ( MOAIBox2DWorld, "U" )
 	
-	self->mWorld->SetLinearSleepTolerance ( state.GetValue < float >( 2, 0.0f ) * self->mUnitsToMeters );
+	self->mWorld->SetLinearSleepTolerance ( state.GetValue < float >( 2, 0.0f ) ); //* self->mUnitsToMeters );
 	return 0;
 }
 
