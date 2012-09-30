@@ -92,12 +92,12 @@ project "moai"
 	includedirs { "src", "src/hosts", "src/aku" }
 	files {	"src/hosts/GlutHost.*", "src/hosts/GlutHostMain.*", "src/hosts/ParticlePresets.*" }
 	-- linking order matters and is pretty strict
-	links { "aku", "luaext", "glut", "moaicore", "glew", "contrib" } -- ogg, vorbis?
+	links { "aku", "luaext", "glut", "moaicore", "glew", "uslscore", "contrib" } -- ogg, vorbis?
 	if not _OPTIONS["no-freetype"] then links "freetype" end
 	links { "tinyxml" }
 	if not _OPTIONS["no-box2d"] then links "box2d" end
 	if not _OPTIONS["no-chipmunk"] then links "chipmunk" end
-	links { "jansson", "uslscore", "expat", "zlcore", "tlsf", "jpg", "png", "z", "cares", "lua-lib" }
+	links { "jansson", "expat", "zlcore", "tlsf", "jpg", "png", "z", "cares", "lua-lib" }
 	if not _OPTIONS["no-curl"] then links "curl" end
 	if not _OPTIONS["no-openssl"] then links "ssl" end
 	links { "crypto", "GL", "pthread", "rt", "dl" }
@@ -459,7 +459,7 @@ project "contrib"
 	language "C"
 	location "build"
 	includedirs { "3rdparty/contrib" }
-	files {	"3rdparty/contrib/utf8.c", "3rdparty/contrib/utf8.h" }
+	files {	"3rdparty/contrib/utf8.c", "3rdparty/contrib/utf8.h", "3rdparty/contrib/whirlpool.c", "3rdparty/contrib/whirlpool.h" }
 
 --
 -- Tlsf
@@ -491,7 +491,7 @@ project "uslscore"
 	language "C++"
 	location "build"
 	defines { "__MOAI_LINUX_BUILD" }
-	includedirs { "src", "src/uslscore", "3rdparty/ooid-0.99", "3rdparty/expat-2.0.1/lib" }
+	includedirs { "src", "src/uslscore", "3rdparty", "3rdparty/ooid-0.99", "3rdparty/expat-2.0.1/lib" }
 	files {	"src/uslscore/*.cpp", "src/uslscore/*.h" }
 
 --
