@@ -33,7 +33,7 @@ staticTextbox:setYFlip ( true )
 layer:insertProp ( staticTextbox )
 
 dynamicFont = MOAIFont.new ()
-dynamicFont:load ( "Verdana.ttf" )
+dynamicFont:load ( "verdana.ttf" )
 dynamicFont:preloadGlyphs ( charcodes, 18 )
 
 dynamicTextbox = MOAITextBox.new ()
