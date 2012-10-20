@@ -164,18 +164,18 @@ bool Sound::decode(const RString& path, SoundInfo& info, float** data)
 	}
 	else
 	{
-#if defined(__APPLE__)
+#if defined(WIN32)
+		DShowAudioSource* as = new DShowAudioSource();
+		source = as;
+		if(as->init(path, true))
+			decoded = true;
+#elif defined(__APPLE__)
 		ExtAudioFileAudioSource *as = new ExtAudioFileAudioSource();
 		source = as;
 		if(as->init(path, true))
 			decoded = true;
-#elif defined(__ANDROID__)
-        WaveFileAudioSource *as = new WaveFileAudioSource();
-		source = as;
-		if(as->init(path, true))
-			decoded = true;
 #else
-		DShowAudioSource* as = new DShowAudioSource();
+        WaveFileAudioSource *as = new WaveFileAudioSource();
 		source = as;
 		if(as->init(path, true))
 			decoded = true;

@@ -88,11 +88,11 @@ project "moai"
 	defines "PIC"
 	buildoptions "-fPIC"
 	configuration()
-	defines { "__MOAI_LINUX_BUILD", "GLUTHOST_USE_LUAEXT", "GLUT_LIBRARY_PATH=\"<GL/glut.h>\"" }
+	defines { "__MOAI_LINUX_BUILD", "GLUTHOST_USE_LUAEXT", "GLUT_LIBRARY_PATH=\"<GL/glut.h>\"", "GLUTHOST_USE_UNTZ" }
 	includedirs { "src", "src/hosts", "src/aku" }
 	files {	"src/hosts/GlutHost.*", "src/hosts/GlutHostMain.*", "src/hosts/ParticlePresets.*" }
 	-- linking order matters and is pretty strict
-	links { "aku", "luaext", "glut", "moaicore", "glew", "uslscore", "contrib" } -- ogg, vorbis?
+	links { "aku", "luaext", "glut", "moaicore", "glew", "uslscore", "contrib", "moaiext-untz", "untz", "vorbis", "ogg", "asound"  }
 	if not _OPTIONS["no-freetype"] then links "freetype" end
 	links { "tinyxml" }
 	if not _OPTIONS["no-box2d"] then links "box2d" end
@@ -121,9 +121,10 @@ project "aku"
 	location "build"
 	includedirs { "src", "src/aku", "3rdparty", "src/config-default", "3rdparty/glew-1.5.6/include", "3rdparty/freetype-2.4.4/include",
 					"3rdparty/tinyxml", "3rdparty/box2d-2.2.1", "3rdparty/chipmunk-5.3.4/include", "3rdparty/jansson-2.1/src",
-					"3rdparty/expat-2.0.1/lib", "3rdparty/zlib-1.2.3", "3rdparty/curl-7.19.7/include", "3rdparty/lua-5.1.3/src"}
+					"3rdparty/expat-2.0.1/lib", "3rdparty/zlib-1.2.3", "3rdparty/curl-7.19.7/include", "3rdparty/lua-5.1.3/src",
+					"3rdparty/untz/include" }
 	files {	"src/aku/*.cpp", "src/aku/*.h" }
-	excludes {	"src/aku/AKU-audiosampler.cpp", "src/aku/AKU-untz.cpp" }
+	excludes {	"src/aku/AKU-audiosampler.cpp" }
 
 --
 -- Box2D
@@ -450,6 +451,48 @@ project "luaext"
 			"3rdparty/luacrypto-0.2.0/src/lcrypto.c", "3rdparty/luacurl-1.2.1/luacurl.c", "3rdparty/luasql-2.2.0/src/ls_sqlite3.c",
 			"3rdparty/sqlite-3.6.16/sqlite3.c", "3rdparty/luasql-2.2.0/src/luasql.c", "3rdparty/luafilesystem-1.5.0/src/lfs.c" }
 	excludes {	"3rdparty/luasocket-2.0.2/src/wsocket.c" }
+
+--
+-- Luac
+--
+project "luac"
+	kind "ConsoleApp"
+	language "C"
+	location "build"
+	defines "PIC"
+	buildoptions "-fPIC"
+	configuration()
+	includedirs { "3rdparty/lua-5.1.3/src" }
+	files {	"3rdparty/lua-5.1.3/src/luac.c" }
+	-- linking order matters and is pretty strict
+	links { "lua-lib" }
+	
+--
+-- Untz
+--
+project "untz"
+	kind "StaticLib"
+	language "C"
+	location "build"
+	defines { "__LINUX_PULSE__", "__LINUX_ALSA__", "__LINUX_OSS__" }
+	includedirs { "3rdparty", "3rdparty/untz/src", "3rdparty/untz/include",
+				"3rdparty/rtaudio-4.0.8/include", "3rdparty/rtaudio-4.0.8",
+				"3rdparty/libvorbis-1.3.2/include", "3rdparty/libogg-1.2.2/include",
+				"3rdparty/untz/src/native/linux" }
+	files { "3rdparty/untz/src/**.cpp", "3rdparty/untz/src/**.h", "3rdparty/untz/include/**.h",
+			"3rdparty/rtaudio-4.0.8/Rt*.*", "3rdparty/rtaudio-4.0.8/include/soundcard.h" }
+	excludes { "3rdparty/untz/src/native/android/**", "3rdparty/untz/src/native/ios/**",
+				"3rdparty/untz/src/native/win/**" }
+
+--
+-- MoaiExt-Untz
+--
+project "moaiext-untz"
+	kind "StaticLib"
+	language "C"
+	location "build"
+	includedirs { "src", "src/config-default", "3rdparty", "3rdparty/untz/include", "3rdparty/glew-1.5.6/include", "3rdparty/freetype-2.4.4/include", "3rdparty/tinyxml", "3rdparty/box2d-2.2.1" }
+	files {	"src/moaiext-untz/*.cpp", "src/moaiext-untz/*.h" }
 
 --
 -- Contrib
