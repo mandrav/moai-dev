@@ -92,7 +92,8 @@ project "moai"
 	includedirs { "src", "src/hosts", "src/aku" }
 	files {	"src/hosts/GlutHost.*", "src/hosts/GlutHostMain.*", "src/hosts/ParticlePresets.*" }
 	-- linking order matters and is pretty strict
-	links { "aku", "luaext", "glut", "moaicore", "glew", "uslscore", "contrib", "moaiext-untz", "untz", "vorbis", "ogg", "asound"  }
+	links { "aku", "luaext", "glut", "moaicore", "glew", "uslscore", "contrib",
+			"moaiext-untz", "untz", "vorbisfile", "vorbis", "ogg", "asound"  }
 	if not _OPTIONS["no-freetype"] then links "freetype" end
 	links { "tinyxml" }
 	if not _OPTIONS["no-box2d"] then links "box2d" end
@@ -101,6 +102,7 @@ project "moai"
 	if not _OPTIONS["no-curl"] then links "curl" end
 	if not _OPTIONS["no-openssl"] then links "ssl" end
 	links { "crypto", "GL", "pthread", "rt", "dl" }
+-- vorbisfile must be installed separately???
 
 --
 -- MOAI Core
@@ -109,7 +111,15 @@ project "moaicore"
 	kind "StaticLib"
 	language "C++"
 	location "build"
-	includedirs { "src", "3rdparty", "src/config-default", "src/uslscore", "3rdparty/expat-2.0.1/lib", "3rdparty/glew-1.5.6/include", "3rdparty/contrib", "3rdparty/box2d-2.2.1", "3rdparty/chipmunk-5.3.4/include", "3rdparty/freetype-2.4.4/include", "3rdparty/tinyxml", "3rdparty/jpeg-8c", "3rdparty/lpng140", "3rdparty/jansson-2.1/src", "3rdparty/lua-5.1.3/src", "3rdparty/curl-7.19.7/include", "3rdparty/openssl-1.0.0d/include", "3rdparty/c-ares-1.7.5" }
+	includedirs { "src", "3rdparty", "src/config-default",
+				"src/uslscore", "3rdparty/expat-2.0.1/lib",
+				"3rdparty/glew-1.5.6/include", "3rdparty/contrib",
+				"3rdparty/box2d-2.2.1", "3rdparty/chipmunk-5.3.4/include",
+				"3rdparty/freetype-2.4.4/include", "3rdparty/tinyxml",
+				"3rdparty/jpeg-8c", "3rdparty/lpng140", "3rdparty/jansson-2.1/src",
+				"3rdparty/lua-5.1.3/src", "3rdparty/curl-7.19.7/include",
+				"3rdparty/openssl-1.0.0d/include", "3rdparty/c-ares-1.7.5",
+				"3rdparty/zlib-1.2.3" }
 	files {	"src/moaicore/*.cpp", "src/moaicore/*.h", "src/config-default/moaicore-config.h" }
 
 --
@@ -192,9 +202,12 @@ if not _OPTIONS["no-freetype"] then
 					"3rdparty/freetype-2.4.4/src/raster/ftraster.c",
 					"3rdparty/freetype-2.4.4/src/raster/ftrend1.c",
 					"3rdparty/freetype-2.4.4/src/raster/rastpic.c",
+					"3rdparty/freetype-2.4.4/src/sfnt/sfnt.c",
+					"3rdparty/freetype-2.4.4/src/sfnt/ttsbit0.c",
 					"3rdparty/freetype-2.4.4/src/smooth/ftgrays.c",
 					"3rdparty/freetype-2.4.4/src/smooth/ftsmooth.c",
 					"3rdparty/freetype-2.4.4/src/smooth/ftspic.c",
+					"3rdparty/freetype-2.4.4/src/truetype/truetype.c",
 					"3rdparty/freetype-2.4.4/src/base/ftmac.c" }
 end
 
@@ -319,7 +332,7 @@ project "crypto"
 	excludes { "3rdparty/openssl-1.0.0d/crypto/aes/aes_x86core.c",
 				"3rdparty/openssl-1.0.0d/crypto/des/speed.c", "3rdparty/openssl-1.0.0d/crypto/des/rpw.c", "3rdparty/openssl-1.0.0d/crypto/des/cbc3_enc.c",
 				"3rdparty/openssl-1.0.0d/crypto/des/des.c", "3rdparty/openssl-1.0.0d/crypto/des/des_old.c", "3rdparty/openssl-1.0.0d/crypto/des/des_old2.c",
-				"3rdparty/openssl-1.0.0d/crypto/des/destest.c", "3rdparty/openssl-1.0.0d/crypto/des/ede_cbcm_enc.c", "3rdparty/openssl-1.0.0d/crypto/des/nbc_enc.c",
+				"3rdparty/openssl-1.0.0d/crypto/des/destest.c", "3rdparty/openssl-1.0.0d/crypto/des/ede_cbcm_enc.c", "3rdparty/openssl-1.0.0d/crypto/des/ncbc_enc.c",
 				"3rdparty/openssl-1.0.0d/crypto/des/read_pwd.c", "3rdparty/openssl-1.0.0d/crypto/des/des_opts.c",
 				"3rdparty/openssl-1.0.0d/crypto/rc2/rc2speed.c", "3rdparty/openssl-1.0.0d/crypto/rc2/rc2test.c", "3rdparty/openssl-1.0.0d/crypto/rc2/tab.c",
 				"3rdparty/openssl-1.0.0d/crypto/rc4/rc4speed.c", "3rdparty/openssl-1.0.0d/crypto/rc4/rc4test.c", "3rdparty/openssl-1.0.0d/crypto/rc4/rc4.c",
@@ -365,7 +378,8 @@ if not _OPTIONS["no-curl"] then
 		language "C"
 		location "build"
 		defines { "L_ENDIAN", "OPENSSL_SYSNAME_LINUX", "OPENSSL_NO_RC5", "OPENSSL_NO_MD2", "OPENSSL_NO_KRB5", "OPENSSL_NO_JPAKE", "OPENSSL_NO_STATIC_ENGINE", "__MOAI_LINUX_BUILD" }
-		includedirs { "premake_files/libcurl/", "3rdparty/curl-7.19.7/include", "3rdparty/openssl-1.0.0d/include" }
+		includedirs { "premake_files/libcurl/", "3rdparty/curl-7.19.7/include",
+					"3rdparty/openssl-1.0.0d/include", "3rdparty/zlib-1.2.3" }
 		files {	"3rdparty/curl-7.19.7/lib/**.c", "3rdparty/curl-7.19.7/lib/**.h" }
 end
 
@@ -401,7 +415,7 @@ project "png"
 	kind "StaticLib"
 	language "C"
 	location "build"
-	includedirs { "3rdparty/lpng140" }
+	includedirs { "3rdparty/lpng140", "3rdparty/zlib-1.2.3" }
 	files {	"3rdparty/lpng140/*.c", "3rdparty/lpng140/*.h" }
 	excludes {	"3rdparty/jpeg-8c/example.c", "3rdparty/jpeg-8c/pngtest.c" }
 
@@ -491,7 +505,12 @@ project "moaiext-untz"
 	kind "StaticLib"
 	language "C"
 	location "build"
-	includedirs { "src", "src/config-default", "3rdparty", "3rdparty/untz/include", "3rdparty/glew-1.5.6/include", "3rdparty/freetype-2.4.4/include", "3rdparty/tinyxml", "3rdparty/box2d-2.2.1" }
+	includedirs { "src", "src/config-default", "3rdparty",
+				"3rdparty/untz/include", "3rdparty/glew-1.5.6/include",
+				"3rdparty/freetype-2.4.4/include", "3rdparty/tinyxml",
+				"3rdparty/box2d-2.2.1", "3rdparty/lua-5.1.3/src",
+				"3rdparty/zlib-1.2.3", "3rdparty/expat-2.0.1/lib",
+				"3rdparty/curl-7.19.7/include" }
 	files {	"src/moaiext-untz/*.cpp", "src/moaiext-untz/*.h" }
 
 --
@@ -521,7 +540,7 @@ project "zlcore"
 	kind "StaticLib"
 	language "C++"
 	location "build"
-	includedirs { "src", "src/zlcore", "3rdparty/tlsf-2.0" }
+	includedirs { "src", "src/zlcore", "3rdparty/tlsf-2.0", "3rdparty/zlib-1.2.3" }
 	files {	"src/zlcore/*.cpp", "src/zlcore/*.h" }
 
 -- OOID ???
@@ -534,7 +553,10 @@ project "uslscore"
 	language "C++"
 	location "build"
 	defines { "__MOAI_LINUX_BUILD" }
-	includedirs { "src", "src/uslscore", "3rdparty", "3rdparty/ooid-0.99", "3rdparty/expat-2.0.1/lib" }
+	includedirs { "src", "src/uslscore", "3rdparty",
+				"3rdparty/ooid-0.99", "3rdparty/expat-2.0.1/lib",
+				"3rdparty/zlib-1.2.3", "3rdparty/lua-5.1.3/src",
+				"3rdparty/openssl-1.0.0d/include" }
 	files {	"src/uslscore/*.cpp", "src/uslscore/*.h" }
 
 --
@@ -544,6 +566,7 @@ project "tinyxml"
 	kind "StaticLib"
 	language "C++"
 	location "build"
+	defines { "TIXML_USE_STL" }
 	includedirs { "3rdparty/tinyxml" }
 	files {	"3rdparty/tinyxml/*.cpp", "3rdparty/tinyxml/*.h" }
 	excludes {	"3rdparty/tinyxml/xmltest.cpp" }
