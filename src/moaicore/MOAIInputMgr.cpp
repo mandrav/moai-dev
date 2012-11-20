@@ -117,6 +117,15 @@ void MOAIInputMgr::EnqueueWheelEvent ( u8 deviceID, u8 sensorID, float value ) {
 }
 
 //----------------------------------------------------------------//
+void MOAIInputMgr::EnqueueJoystickEvent ( u8 deviceID, u8 sensorID, float x, float y, float z ) {
+
+	if ( this->CheckSensor ( deviceID, sensorID, MOAISensor::JOYSTICK )) {
+		this->WriteEventHeader ( deviceID, sensorID, MOAISensor::JOYSTICK );
+		MOAIJoystickSensor::WriteEvent ( this->mInput, x, y /*, z*/ );
+	}
+}
+
+//----------------------------------------------------------------//
 MOAIInputDevice* MOAIInputMgr::GetDevice ( u8 deviceID ) {
 
 	if ( deviceID < this->mDevices.Size ()) {

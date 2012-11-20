@@ -220,6 +220,12 @@ void AKUEnqueueWheelEvent ( int deviceID, int sensorID, float value ) {
 }
 
 //----------------------------------------------------------------//
+void AKUEnqueueJoystickEvent ( int deviceID, int sensorID, float x, float y, float z ) {
+
+	MOAIInputMgr::Get ().EnqueueJoystickEvent (( u8 )deviceID, ( u8 )sensorID, x, y, z );
+}
+
+//----------------------------------------------------------------//
 void AKUFinalize () {
 
 	if ( gContextMap ) {
@@ -442,6 +448,12 @@ void AKUSetInputDeviceTouch ( int deviceID, int sensorID, char const* name ) {
 void AKUSetInputDeviceWheel ( int deviceID, int sensorID, char const* name ) {
 
 	MOAIInputMgr::Get ().SetSensor (( u8 )deviceID, ( u8 )sensorID, name, MOAISensor::WHEEL );
+}
+
+//----------------------------------------------------------------//
+void AKUSetInputDeviceJoystick ( int deviceID, int sensorID, char const* name ) {
+
+	MOAIInputMgr::Get ().SetSensor (( u8 )deviceID, ( u8 )sensorID, name, MOAISensor::JOYSTICK );
 }
 
 
