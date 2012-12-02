@@ -220,9 +220,9 @@ void AKUEnqueueWheelEvent ( int deviceID, int sensorID, float value ) {
 }
 
 //----------------------------------------------------------------//
-void AKUEnqueueJoystickEvent ( int deviceID, int sensorID, float x, float y, float z ) {
+void AKUEnqueueJoystickEvent ( int deviceID, int sensorID, float x, float y ) {
 
-	MOAIInputMgr::Get ().EnqueueJoystickEvent (( u8 )deviceID, ( u8 )sensorID, x, y, z );
+	MOAIInputMgr::Get ().EnqueueJoystickEvent (( u8 )deviceID, ( u8 )sensorID, x, y );
 }
 
 //----------------------------------------------------------------//

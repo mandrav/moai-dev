@@ -44,7 +44,7 @@ public:
 	void				EnqueueTouchEvent			( u8 deviceID, u8 sensorID, u32 touchID, bool down, float x, float y );
 	void				EnqueueTouchEventCancel		( u8 deviceID, u8 sensorID );
 	void				EnqueueWheelEvent			( u8 deviceID, u8 sensorID, float value );
-	void				EnqueueJoystickEvent		( u8 deviceID, u8 sensorID, float x, float y, float z );
+	void				EnqueueJoystickEvent		( u8 deviceID, u8 sensorID, float x, float y );
 
 						MOAIInputMgr				();
 						~MOAIInputMgr				();
