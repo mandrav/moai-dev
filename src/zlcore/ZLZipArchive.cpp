@@ -42,7 +42,7 @@ int ZLZipArchiveHeader::FindAndRead ( FILE* file ) {
 		for ( i = scansize - 4; i >= 0; --i ) {
 			
 			// maybe found it
-			if ( *( unsigned long* )&buffer [ i ] == ARCHIVE_HEADER_SIGNATURE ) {
+			if ( *( unsigned int* )&buffer [ i ] == ARCHIVE_HEADER_SIGNATURE ) {
 
 				fseek ( file, cursor + i, SEEK_SET );
 				
@@ -72,7 +72,7 @@ int ZLZipArchiveHeader::FindAndRead ( FILE* file ) {
 int ZLZipEntryHeader::Read ( FILE* file ) {
 	
 	fread ( &this->mSignature, 4, 1, file );
-	
+
 	if ( this->mSignature != ENTRY_HEADER_SIGNATURE ) return -1;
 	
 	fread ( &this->mByVersion, 2, 1, file );
