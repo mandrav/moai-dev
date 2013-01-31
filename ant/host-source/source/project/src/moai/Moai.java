@@ -15,6 +15,7 @@ import android.content.Intent;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Vibrator;
 import android.provider.Settings.Secure;
 import android.util.DisplayMetrics;
 
@@ -630,6 +631,13 @@ public class Moai {
 		if ( text != null ) intent.putExtra ( Intent.EXTRA_TEXT, text );
 	
 		sActivity.startActivity ( Intent.createChooser ( intent, prompt ));
+	}
+	
+	//----------------------------------------------------------------//
+	public static void vibrate ( int milliseconds ) {
+
+		Vibrator v = (Vibrator) sActivity.getSystemService(Context.VIBRATOR_SERVICE);
+		v.vibrate(milliseconds);
 	}
 	
 	//----------------------------------------------------------------//
