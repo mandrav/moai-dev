@@ -176,6 +176,40 @@ int MOAIAppAndroid::_share ( lua_State* L ) {
 	return 0;
 }
 
+//----------------------------------------------------------------//
+/**	@name	vibrate
+	@text	Vibrate for the given amount of milliseconds.
+	
+	@in		number	milliseconds	The time-span to vibrate for.
+	@out 	nil
+*/
+int MOAIAppAndroid::_vibrate ( lua_State* L ) {
+	
+	MOAILuaState state ( L );
+	
+	int ms = lua_tonumber ( state, 1 );
+	
+	JNI_GET_ENV ( jvm, env );
+
+	jclass moai = env->FindClass ( "com/ziplinegames/moai/Moai" );
+    if ( moai == NULL ) {
+
+		USLog::Print ( "MOAIAppAndroid: Unable to find java class %s", "com/ziplinegames/moai/Moai" );
+    } else {
+
+    	jmethodID vibrate = env->GetStaticMethodID ( moai, "vibrate", "(I)V" );
+    	if ( vibrate == NULL ) {
+
+			USLog::Print ( "MOAIAppAndroid: Unable to find static java method %s", "vibrate" );
+    	} else {
+
+			env->CallStaticVoidMethod ( moai, vibrate, ms );	
+		}
+	}
+	
+	return 0;
+}
+
 //================================================================//
 // MOAIAppAndroid
 //================================================================//
@@ -204,6 +238,7 @@ void MOAIAppAndroid::RegisterLuaClass ( MOAILuaState& state ) {
 		{ "openURL",				_openURL },
 		{ "setListener",			_setListener },
 		{ "share",					_share },
+		{ "vibrate",				_vibrate },
 		{ NULL, NULL }
 	};
 
