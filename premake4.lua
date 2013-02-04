@@ -24,6 +24,10 @@ newoption {
    description = "Remove OpenSSL support"
 }
 
+function support_zip_files()
+	buildoptions { "-include zlcore/zl_replace.h" }
+end
+
 -- setup workspace/solution
 solution "MOAI"
 	configurations { "Debug", "Release" }
@@ -65,6 +69,12 @@ solution "MOAI"
 		--~ buildoptions "-std=c99"
 --		buildoptions "-Wno-invalid-offsetof"
 
+	defines "PIC"
+	buildoptions "-fPIC"
+
+	-- this is common to all projects
+	includedirs "src"
+
 	configuration { "linux" }
 		defines "VERSION_STAGE=linux"
 	
@@ -85,8 +95,6 @@ project "moai"
 	kind "ConsoleApp"
 	language "C++"
 	location "build"
-	defines "PIC"
-	buildoptions "-fPIC"
 	configuration()
 	defines { "__MOAI_LINUX_BUILD", "GLUTHOST_USE_LUAEXT", "GLUT_LIBRARY_PATH=\"<GL/glut.h>\"", "GLUTHOST_USE_UNTZ" }
 	includedirs { "src", "src/hosts", "src/aku" }
@@ -105,12 +113,48 @@ project "moai"
 -- vorbisfile must be installed separately???
 
 --
+-- moai JNI
+--
+project "moaijni"
+	kind "SharedLib"
+	language "C++"
+	location "build"
+	configuration()
+	support_zip_files()
+	defines { "__MOAI_LINUX_BUILD" }
+	includedirs { "src", "src/aku", "/usr/lib/jvm/default-java/include",
+				"3rdparty", "src/config-default",
+				"src/uslscore", "3rdparty/expat-2.0.1/lib",
+				"3rdparty/glew-1.5.6/include", "3rdparty/contrib",
+				"3rdparty/box2d-2.2.1", "3rdparty/chipmunk-5.3.4/include",
+				"3rdparty/freetype-2.4.4/include", "3rdparty/tinyxml",
+				"3rdparty/jpeg-8c", "3rdparty/lpng140", "3rdparty/jansson-2.1/src",
+				"3rdparty/lua-5.1.3/src", "3rdparty/curl-7.19.7/include",
+				"3rdparty/openssl-1.0.0d/include", "3rdparty/c-ares-1.7.5",
+				"3rdparty/zlib-1.2.3"
+				}
+	files {	"src/jni/*" }
+	-- linking order matters and is pretty strict
+	links { "aku", "luaext", "glut", "moaicore", "glew", "uslscore", "contrib",
+			"moaiext-untz", "untz", --[["vorbisfile",]] "vorbis", "ogg", "asound", "moaicore"  }
+	if not _OPTIONS["no-freetype"] then links "freetype" end
+	links { "tinyxml" }
+	if not _OPTIONS["no-box2d"] then links "box2d" end
+	if not _OPTIONS["no-chipmunk"] then links "chipmunk" end
+	links { "jansson", "expat", "zlcore", "tlsf", "jpg", "png", "z", "cares", "lua-lib" }
+	if not _OPTIONS["no-curl"] then links "curl" end
+	if not _OPTIONS["no-openssl"] then links "ssl" end
+	links { "crypto", "GL", "pthread", "rt", "dl" }
+-- vorbisfile must be installed separately???
+
+--
 -- MOAI Core
 --
 project "moaicore"
 	kind "StaticLib"
 	language "C++"
 	location "build"
+	support_zip_files()
 	includedirs { "src", "3rdparty", "src/config-default",
 				"src/uslscore", "3rdparty/expat-2.0.1/lib",
 				"3rdparty/glew-1.5.6/include", "3rdparty/contrib",
@@ -129,6 +173,7 @@ project "aku"
 	kind "StaticLib"
 	language "C++"
 	location "build"
+	support_zip_files()
 	includedirs { "src", "src/aku", "3rdparty", "src/config-default", "3rdparty/glew-1.5.6/include", "3rdparty/freetype-2.4.4/include",
 					"3rdparty/tinyxml", "3rdparty/box2d-2.2.1", "3rdparty/chipmunk-5.3.4/include", "3rdparty/jansson-2.1/src",
 					"3rdparty/expat-2.0.1/lib", "3rdparty/zlib-1.2.3", "3rdparty/curl-7.19.7/include", "3rdparty/lua-5.1.3/src",
@@ -144,6 +189,7 @@ if not _OPTIONS["no-box2d"] then
 		kind "StaticLib"
 		language "C++"
 		location "build"
+		support_zip_files()
 		files {	"3rdparty/box2d-2.2.1/Box2D/**.cpp", "3rdparty/box2d-2.2.1/Box2D/**.h" }
 		includedirs { "3rdparty/box2d-2.2.1" }
 end
@@ -156,6 +202,7 @@ if not _OPTIONS["no-chipmunk"] then
 		kind "StaticLib"
 		language "C"
 		location "build"
+		support_zip_files()
 		buildoptions "-std=gnu99"
 		includedirs { "3rdparty/chipmunk-5.3.4/include", "3rdparty/chipmunk-5.3.4/include/chipmunk" }
 		files {	"3rdparty/chipmunk-5.3.4/src/**.c", "3rdparty/chipmunk-5.3.4/include/**.h" }
@@ -169,6 +216,7 @@ project "expat"
 	language "C"
 	location "build"
 	defines "HAVE_MEMMOVE"
+	support_zip_files()
 	includedirs { "3rdparty/expat-2.0.1/lib" }
 	files {	"3rdparty/expat-2.0.1/lib/**.c", "3rdparty/expat-2.0.1/lib/**.h" }
 
@@ -180,6 +228,7 @@ if not _OPTIONS["no-freetype"] then
 		kind "StaticLib"
 		language "C"
 		location "build"
+		support_zip_files()
 		buildoptions "-std=c99"
 		defines { "FT2_BUILD_LIBRARY", "__MOAI_LINUX_BUILD" }
 		includedirs { "3rdparty/freetype-2.4.4/include" }
@@ -228,6 +277,7 @@ project "jansson"
 	kind "StaticLib"
 	language "C"
 	location "build"
+	support_zip_files()
 	includedirs { "3rdparty/jansson-2.1/src" }
 	files {	"3rdparty/jansson-2.1/src/**.c", "3rdparty/jansson-2.1/src/**.h" }
 
@@ -259,6 +309,7 @@ project "crypto"
 	kind "StaticLib"
 	language "C"
 	location "build"
+	support_zip_files()
 	defines {"L_ENDIAN", "OPENSSL_SYSNAME_LINUX", "OPENSSL_NO_RC5", "OPENSSL_NO_MD2",
 			"OPENSSL_NO_KRB5", "OPENSSL_NO_JPAKE", "OPENSSL_NO_STATIC_ENGINE",
 			"MK1MF_BUILD", "MK1MF_PLATFORM_VC_LINUX", "OPENSSL_NO_STATIC_ENGINE" }
@@ -360,6 +411,7 @@ if not _OPTIONS["no-openssl"] then
 		kind "StaticLib"
 		language "C"
 		location "build"
+		support_zip_files()
 		defines { "L_ENDIAN", "OPENSSL_SYSNAME_LINUX", "OPENSSL_NO_RC5", "OPENSSL_NO_MD2", "OPENSSL_NO_KRB5", "OPENSSL_NO_JPAKE", "OPENSSL_NO_STATIC_ENGINE" }
 		includedirs { "premake_files/libcrypto/",
 						"3rdparty/openssl-1.0.0d/include",
@@ -377,6 +429,7 @@ if not _OPTIONS["no-curl"] then
 		kind "StaticLib"
 		language "C"
 		location "build"
+		support_zip_files()
 		defines { "L_ENDIAN", "OPENSSL_SYSNAME_LINUX", "OPENSSL_NO_RC5", "OPENSSL_NO_MD2", "OPENSSL_NO_KRB5", "OPENSSL_NO_JPAKE", "OPENSSL_NO_STATIC_ENGINE", "__MOAI_LINUX_BUILD" }
 		includedirs { "premake_files/libcurl/", "3rdparty/curl-7.19.7/include",
 					"3rdparty/openssl-1.0.0d/include", "3rdparty/zlib-1.2.3" }
@@ -390,6 +443,7 @@ project "cares"
 	kind "StaticLib"
 	language "C"
 	location "build"
+	support_zip_files()
 	defines { "HAVE_CONFIG_H", "h_addr=h_addr_list[0]" }
 	includedirs { "premake_files/libcurl/", "premake_files/libcares/", "3rdparty/c-ares-1.7.5", "3rdparty/c-ares-1.7.5/include", "3rdparty/curl-7.19.7/include" }
 	files {	"3rdparty/c-ares-1.7.5/ares_*.c", "3rdparty/c-ares-1.7.5/*.h", "3rdparty/c-ares-1.7.5/bitncmp.c", "3rdparty/c-ares-1.7.5/inet_net_pton.c" }
@@ -402,6 +456,7 @@ project "jpg"
 	kind "StaticLib"
 	language "C"
 	location "build"
+	support_zip_files()
 	includedirs { "3rdparty/jpeg-8c" }
 	files {	"3rdparty/jpeg-8c/*.c", "3rdparty/jpeg-8c/*.h" }
 	excludes {	"3rdparty/jpeg-8c/ansi2knr.c", "3rdparty/jpeg-8c/cjpeg.c", "3rdparty/jpeg-8c/ckconfig.c", "3rdparty/jpeg-8c/djpeg.c",
@@ -415,6 +470,7 @@ project "png"
 	kind "StaticLib"
 	language "C"
 	location "build"
+	support_zip_files()
 	includedirs { "3rdparty/lpng140", "3rdparty/zlib-1.2.3" }
 	files {	"3rdparty/lpng140/*.c", "3rdparty/lpng140/*.h" }
 	excludes {	"3rdparty/jpeg-8c/example.c", "3rdparty/jpeg-8c/pngtest.c" }
@@ -426,6 +482,7 @@ project "ogg"
 	kind "StaticLib"
 	language "C"
 	location "build"
+	support_zip_files()
 	includedirs { "3rdparty/libogg-1.2.2/include" }
 	files {	"3rdparty/libogg-1.2.2/src/bitwise.c", "3rdparty/libogg-1.2.2/src/framing.c", "3rdparty/lpng140/src/*.h" }
 
@@ -436,6 +493,7 @@ project "vorbis"
 	kind "StaticLib"
 	language "C"
 	location "build"
+	support_zip_files()
 	includedirs { "3rdparty/libvorbis-1.3.2/include", "3rdparty/libvorbis-1.3.2/lib", "3rdparty/libogg-1.2.2/include" }
 	files {	"3rdparty/libvorbis-1.3.2/lib/*.c", "3rdparty/libvorbis-1.3.2/lib/*.h" }
 	excludes {	"3rdparty/libvorbis-1.3.2/lib/barkmel.c", "3rdparty/libvorbis-1.3.2/lib/psytune.c", "3rdparty/libvorbis-1.3.2/lib/sharedbook.c", "3rdparty/libvorbis-1.3.2/lib/tone.c" }
@@ -447,6 +505,7 @@ project "lua-lib"
 	kind "StaticLib"
 	language "C"
 	location "build"
+	support_zip_files()
 	includedirs { "3rdparty/lua-5.1.3/src" }
 	files {	"3rdparty/lua-5.1.3/src/*.c", "3rdparty/lua-5.1.3/src/*.h" }
 	excludes {	"3rdparty/lua-5.1.3/src/lua.c", "3rdparty/lua-5.1.3/src/luac.c" }
@@ -458,6 +517,7 @@ project "luaext"
 	kind "StaticLib"
 	language "C"
 	location "build"
+	support_zip_files()
 	includedirs { "3rdparty/lua-5.1.3/src", "3rdparty/luasocket-2.0.2/src", "3rdparty/sqlite-3.6.16",
 			"3rdparty/expat-2.0.1/lib", "3rdparty/zlib-1.2.3", "3rdparty/curl-7.19.7/include", "3rdparty/lua-5.1.3/src",
 			"3rdparty/openssl-1.0.0d/include"}
@@ -466,20 +526,21 @@ project "luaext"
 			"3rdparty/sqlite-3.6.16/sqlite3.c", "3rdparty/luasql-2.2.0/src/luasql.c", "3rdparty/luafilesystem-1.5.0/src/lfs.c" }
 	excludes {	"3rdparty/luasocket-2.0.2/src/wsocket.c" }
 
---
--- Luac
---
-project "luac"
-	kind "ConsoleApp"
-	language "C"
-	location "build"
-	defines "PIC"
-	buildoptions "-fPIC"
-	configuration()
-	includedirs { "3rdparty/lua-5.1.3/src" }
-	files {	"3rdparty/lua-5.1.3/src/luac.c" }
-	-- linking order matters and is pretty strict
-	links { "lua-lib" }
+--~ --
+--~ -- Luac
+--~ --
+--~ project "luac"
+	--~ kind "ConsoleApp"
+	--~ language "C"
+	--~ location "build"
+	--~ defines "PIC"
+	--~ buildoptions "-fPIC"
+	--~ configuration()
+	--~ support_zip_files()
+	--~ includedirs { "3rdparty/lua-5.1.3/src" }
+	--~ files {	"3rdparty/lua-5.1.3/src/luac.c" }
+	--~ -- linking order matters and is pretty strict
+	--~ links { "lua-lib" }
 	
 --
 -- Untz
@@ -505,6 +566,7 @@ project "moaiext-untz"
 	kind "StaticLib"
 	language "C"
 	location "build"
+	support_zip_files()
 	includedirs { "src", "src/config-default", "3rdparty",
 				"3rdparty/untz/include", "3rdparty/glew-1.5.6/include",
 				"3rdparty/freetype-2.4.4/include", "3rdparty/tinyxml",
@@ -520,6 +582,7 @@ project "contrib"
 	kind "StaticLib"
 	language "C"
 	location "build"
+	support_zip_files()
 	includedirs { "3rdparty/contrib" }
 	files {	"3rdparty/contrib/utf8.c", "3rdparty/contrib/utf8.h", "3rdparty/contrib/whirlpool.c", "3rdparty/contrib/whirlpool.h" }
 
@@ -552,6 +615,7 @@ project "uslscore"
 	kind "StaticLib"
 	language "C++"
 	location "build"
+	support_zip_files()
 	defines { "__MOAI_LINUX_BUILD" }
 	includedirs { "src", "src/uslscore", "3rdparty",
 				"3rdparty/ooid-0.99", "3rdparty/expat-2.0.1/lib",
@@ -566,6 +630,7 @@ project "tinyxml"
 	kind "StaticLib"
 	language "C++"
 	location "build"
+	support_zip_files()
 	defines { "TIXML_USE_STL" }
 	includedirs { "3rdparty/tinyxml" }
 	files {	"3rdparty/tinyxml/*.cpp", "3rdparty/tinyxml/*.h" }
