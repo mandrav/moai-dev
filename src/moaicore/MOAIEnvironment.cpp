@@ -9,6 +9,11 @@
 #ifdef _WIN32
 	#include <shlobj.h>
 	typedef void (WINAPI *PGNSI)(LPSYSTEM_INFO);
+#elif defined(MOAI_OS_LINUX)
+	#include <sys/utsname.h>
+	#include <unistd.h>
+	#include <sys/types.h>
+	#include <pwd.h>
 #endif
 
 //================================================================//
@@ -150,7 +155,31 @@ void MOAIEnvironment::DetectEnvironment () {
 		
 	#elif defined( MOAI_OS_LINUX )
 	
+		struct utsname info;
+//		machine: x86_64
+//		nodename: mandrav64
+//		release: 3.5.0-23-generic
+//		sysname: Linux
+//		version: #35-Ubuntu SMP Thu Jan 24 13:15:40 UTC 2013
+//		#ifdef _GNU_SOURCE
+//			domain: (none)
+//		#endif
+		uname( &info );
+
+		const char* homedir = getenv ( "HOME" );
+		if (!homedir)
+		{
+			struct passwd* pw = getpwuid ( getuid () );
+			homedir = pw->pw_dir;
+		}
+		std::string home = ( homedir ? std::string(homedir) : "." ) + "/";
+		
 		this->SetValue ( MOAI_ENV_osBrand, "Linux" );
+		this->SetValue ( MOAI_ENV_osVersion, info.release );
+		this->SetValue ( MOAI_ENV_cpuabi, info.machine );
+		this->SetValue ( MOAI_ENV_devName, info.nodename );
+		this->SetValue ( MOAI_ENV_documentDirectory, home.c_str() );
+		
 
 	#elif defined ( MOAI_OS_OSX )
 	
